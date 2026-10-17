@@ -309,8 +309,45 @@ class App {
   }
 }
 
-// Instantiate on DOM load
+// Instantiate on DOM load & expose clean Rotation API on window
 window.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   (window as unknown as { __app: App }).__app = app;
+  (window as unknown as { soundbox: typeof app.soundbox }).soundbox = app.soundbox;
+
+  // Dedicated Rotation API accessible from window.rotationAPI
+  const rotationAPI = {
+    rotateToCustomer: () => {
+      app.soundbox.rotateToCustomer();
+      console.log('🔄 Articulating to Customer view (Yaw: 0°, Pitch: -26°)');
+    },
+    rotateToMerchant: () => {
+      app.soundbox.rotateToMerchant();
+      console.log('🔄 Articulating to Merchant view (Yaw: 180°, Pitch: -18°)');
+    },
+    setRotation: (yawDeg: number, pitchDeg?: number) => {
+      app.soundbox.setRotationDegrees(yawDeg, pitchDeg);
+      console.log(`🔄 Set target rotation to Yaw: ${yawDeg}°, Pitch: ${pitchDeg ?? 'unchanged'}°`);
+    },
+    toggle: () => {
+      app.soundbox.toggleSide();
+      console.log('🔄 Toggled between Customer and Merchant');
+    },
+    enableAutoRotation: (enable: boolean = true) => {
+      app.soundbox.isAutoTurning = enable;
+      console.log(`🔄 Auto-rotation set to: ${enable}`);
+    },
+    getRotation: () => app.soundbox.getRotation()
+  };
+
+  (window as unknown as { rotationAPI: typeof rotationAPI }).rotationAPI = rotationAPI;
+
+  console.log('%c🤖 Chotu Hardware Rotation API Exposed on window.rotationAPI & window.soundbox', 'color: #00BAF2; font-weight: bold; font-size: 13px;');
+  console.log('Available commands:');
+  console.log('• window.rotationAPI.rotateToCustomer()');
+  console.log('• window.rotationAPI.rotateToMerchant()');
+  console.log('• window.rotationAPI.setRotation(yawDeg, pitchDeg)');
+  console.log('• window.rotationAPI.toggle()');
+  console.log('• window.rotationAPI.enableAutoRotation(true/false)');
+  console.log('• window.rotationAPI.getRotation()');
 });

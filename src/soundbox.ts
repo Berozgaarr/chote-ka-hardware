@@ -22,12 +22,12 @@ export class ChotuSoundbox3D {
   private cyanNeonMat: THREE.MeshBasicMaterial;
   private metalAccentMat: THREE.MeshStandardMaterial;
 
-  // Head Dual-Axis Articulation ("Rotates Automatically in Y and Tilts in X between Customer & Merchant")
-  public isAutoTurning: boolean = true;
+  // Head Dual-Axis Articulation ("Rotates Programmatically in Y and Tilts in X between Customer & Merchant")
+  public isAutoTurning: boolean = false;
   private targetHeadAngleY: number = 0; // 0 = Customer side, Math.PI = Merchant side
   private currentHeadAngleY: number = 0;
-  private targetHeadAngleX: number = -THREE.MathUtils.degToRad(24); // Ergonomic 24° upward tilt
-  private currentHeadAngleX: number = -THREE.MathUtils.degToRad(24);
+  private targetHeadAngleX: number = -THREE.MathUtils.degToRad(26); // Ergonomic 26° upward tilt
+  private currentHeadAngleX: number = -THREE.MathUtils.degToRad(26);
   private turnTimer: number = 0;
   private animTime: number = 0;
 
@@ -353,21 +353,47 @@ export class ChotuSoundbox3D {
 
   // Toggle head facing: Customer Side (0 rad) <-> Merchant Side (Math.PI rad)
   public toggleSide() {
-    if (this.targetHeadAngleY === 0) {
-      this.targetHeadAngleY = Math.PI; // Swivel around to Merchant
-      this.targetHeadAngleX = -THREE.MathUtils.degToRad(18); // Flatter angle for merchant counter
+    if (Math.abs(this.targetHeadAngleY) < 0.1) {
+      this.rotateToMerchant();
     } else {
-      this.targetHeadAngleY = 0; // Swivel back to Customer
-      this.targetHeadAngleX = -THREE.MathUtils.degToRad(26); // Tilted up for standing customer
+      this.rotateToCustomer();
     }
   }
 
-  // Programmatic manual angle controls
+  // Programmatic rotation API
+  public rotateToCustomer() {
+    this.targetHeadAngleY = 0; // 0 deg (Customer)
+    this.targetHeadAngleX = -THREE.MathUtils.degToRad(26); // 26° upward tilt
+  }
+
+  public rotateToMerchant() {
+    this.targetHeadAngleY = Math.PI; // 180 deg (Merchant)
+    this.targetHeadAngleX = -THREE.MathUtils.degToRad(18); // 18° flatter counter angle
+  }
+
+  public setRotationDegrees(yawDeg: number, pitchDeg?: number) {
+    this.targetHeadAngleY = THREE.MathUtils.degToRad(yawDeg);
+    if (pitchDeg !== undefined) {
+      this.targetHeadAngleX = THREE.MathUtils.degToRad(pitchDeg);
+    }
+  }
+
+  // Programmatic manual angle controls in radians
   public setHeadAngles(yawY: number, pitchX?: number) {
     this.targetHeadAngleY = yawY;
     if (pitchX !== undefined) {
       this.targetHeadAngleX = pitchX;
     }
+  }
+
+  public getRotation() {
+    return {
+      yawDeg: Math.round(THREE.MathUtils.radToDeg(this.currentHeadAngleY) * 10) / 10,
+      pitchDeg: Math.round(THREE.MathUtils.radToDeg(this.currentHeadAngleX) * 10) / 10,
+      targetYawDeg: Math.round(THREE.MathUtils.radToDeg(this.targetHeadAngleY) * 10) / 10,
+      targetPitchDeg: Math.round(THREE.MathUtils.radToDeg(this.targetHeadAngleX) * 10) / 10,
+      isAutoTurning: this.isAutoTurning
+    };
   }
 
   public update(delta: number) {

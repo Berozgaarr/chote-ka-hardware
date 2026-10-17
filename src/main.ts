@@ -296,8 +296,8 @@ class App {
       this.soundbox.screenGroup.getWorldPosition(worldPos);
       this.soundbox.screenGroup.getWorldQuaternion(worldQuat);
 
-      // Sit cleanly flush on the front face of the unibody casing without popping out
-      const forwardOffset = new THREE.Vector3(0, 0, 0.001).applyQuaternion(worldQuat);
+      // Sit cleanly flush on the front face of the unibody casing without clipping
+      const forwardOffset = new THREE.Vector3(0, 0, 0.004).applyQuaternion(worldQuat);
       worldPos.add(forwardOffset);
 
       this.screenIframeObject.position.copy(worldPos);

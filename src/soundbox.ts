@@ -163,40 +163,40 @@ export class ChotuSoundbox3D {
   // Slender satin aluminum vertical spindle and sleek circular friction hinge mounted right at the screen center
   private buildRoboticGimbalNeck() {
     const neckBaseY = 0.50;
-
-    // A. Recessed Bearing Sleeve Collar on Base
-    const collarGeom = new THREE.CylinderGeometry(0.32, 0.38, 0.10, 48);
-    const collarMesh = new THREE.Mesh(collarGeom, this.darkChassisMat);
-    collarMesh.position.set(0, neckBaseY + 0.05, 0);
-    collarMesh.castShadow = true;
-    this.neckGroup.add(collarMesh);
+    const hingeY = 1.95;
+    const hingeZ = -0.22; // Safely set back behind the 0.18 thick casing
 
     // B. Slender Satin Aluminum Rotation Rod / Spindle (Dual-axis Y rotation)
-    // Vertical spindle goes up straight to meet the hinge axis behind the screen
+    // Vertical spindle goes up to connect directly into the cradle base behind the screen
     const rodRadius = 0.12;
-    const rodTopY = 1.95; // Meets the center of the display height
+    const rodTopY = hingeY - 0.08; // Connects flush to bottom of cradleMesh (cradle is at hingeY with height 0.16)
     const rodHeight = rodTopY - (neckBaseY + 0.08);
     const rodGeom = new THREE.CylinderGeometry(rodRadius, rodRadius, rodHeight, 48);
     const rodMesh = new THREE.Mesh(rodGeom, this.metalAccentMat);
-    rodMesh.position.set(0, neckBaseY + 0.08 + rodHeight / 2, 0);
+    // Position rod tangent to hingeZ
+    rodMesh.position.set(0, neckBaseY + 0.08 + rodHeight / 2, hingeZ - 0.08);
     rodMesh.castShadow = true;
     this.headGroup.add(rodMesh);
 
     // Precision tolerance accent sleeve on spindle
     const sleeveGeom = new THREE.CylinderGeometry(0.16, 0.16, 0.10, 48);
     const sleeveMesh = new THREE.Mesh(sleeveGeom, this.darkChassisMat);
-    sleeveMesh.position.set(0, neckBaseY + 0.36, 0);
+    sleeveMesh.position.set(0, neckBaseY + 0.36, hingeZ - 0.08);
     this.headGroup.add(sleeveMesh);
 
-    // C. Center Hinge Hub mounted directly in the middle of the display's backside
-    // Positioned strictly behind the rear casing (back face is at z = -headDepth = -0.18)
-    const hingeY = 1.95;
-    const hingeZ = -0.18; // Tangent to the back face of the display
+    // Recessed Bearing Sleeve Collar on Base
+    const collarGeom = new THREE.CylinderGeometry(0.32, 0.38, 0.10, 48);
+    const collarMesh = new THREE.Mesh(collarGeom, this.darkChassisMat);
+    collarMesh.position.set(0, neckBaseY + 0.05, hingeZ - 0.08);
+    collarMesh.castShadow = true;
+    this.neckGroup.add(collarMesh);
 
+    // C. Center Hinge Hub mounted directly in the middle of the display's backside
+    // When screenGroup tilts upward around (0, hingeY, hingeZ), the back surface stays behind z = -headDepth (-0.18)
     // 1. Spindle top cradle head supporting the transverse hinge
     const cradleGeom = new RoundedBoxGeometry(0.36, 0.16, 0.16, 4, 0.04);
     const cradleMesh = new THREE.Mesh(cradleGeom, this.titaniumBaseMat);
-    cradleMesh.position.set(0, hingeY, hingeZ - 0.04);
+    cradleMesh.position.set(0, hingeY, hingeZ - 0.08);
     cradleMesh.castShadow = true;
     this.headGroup.add(cradleMesh);
 
@@ -204,7 +204,7 @@ export class ChotuSoundbox3D {
     const barrelGeom = new THREE.CylinderGeometry(0.065, 0.065, 0.40, 36);
     barrelGeom.rotateZ(Math.PI / 2);
     const barrelMesh = new THREE.Mesh(barrelGeom, this.metalAccentMat);
-    barrelMesh.position.set(0, hingeY, hingeZ - 0.04);
+    barrelMesh.position.set(0, hingeY, hingeZ - 0.08);
     barrelMesh.castShadow = true;
     this.headGroup.add(barrelMesh);
 
@@ -213,29 +213,28 @@ export class ChotuSoundbox3D {
       const capGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.03, 32);
       capGeom.rotateZ(Math.PI / 2);
       const capMesh = new THREE.Mesh(capGeom, this.darkChassisMat);
-      capMesh.position.set(x, hingeY, hingeZ - 0.04);
+      capMesh.position.set(x, hingeY, hingeZ - 0.08);
       this.headGroup.add(capMesh);
 
       const boltGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.012, 20);
       boltGeom.rotateZ(Math.PI / 2);
       const boltMesh = new THREE.Mesh(boltGeom, this.metalAccentMat);
-      boltMesh.position.set(x > 0 ? x + 0.016 : x - 0.016, hingeY, hingeZ - 0.04);
+      boltMesh.position.set(x > 0 ? x + 0.016 : x - 0.016, hingeY, hingeZ - 0.08);
       this.headGroup.add(boltMesh);
     });
 
     // 3. Apple-style Center Backplate Mounting Bracket on Screen (tilts with screenGroup)
-    // Strictly sits behind the back surface of the screen casing: z < -0.18
+    // Sits on the back surface of the screen casing: z <= -0.18
     const bracketPlateGeom = new THREE.CylinderGeometry(0.24, 0.25, 0.025, 48);
     bracketPlateGeom.rotateX(Math.PI / 2);
     const bracketPlateMesh = new THREE.Mesh(bracketPlateGeom, this.darkChassisMat);
-    // Center of 0.025 thick disc placed at -0.18 - 0.0125 = -0.1925
-    bracketPlateMesh.position.set(0, 0, -0.18 - 0.0125);
+    bracketPlateMesh.position.set(0, 0, -0.18 - 0.015);
     this.screenGroup.add(bracketPlateMesh);
 
     // Precision CNC hinge clamp bridging bracket backplate to transverse barrel
-    const clampGeom = new RoundedBoxGeometry(0.18, 0.14, 0.05, 4, 0.02);
+    const clampGeom = new RoundedBoxGeometry(0.18, 0.14, 0.08, 4, 0.02);
     const clampMesh = new THREE.Mesh(clampGeom, this.metalAccentMat);
-    clampMesh.position.set(0, 0, -0.18 - 0.035);
+    clampMesh.position.set(0, 0, -0.18 - 0.06);
     clampMesh.castShadow = true;
     this.screenGroup.add(clampMesh);
   }
@@ -273,17 +272,11 @@ export class ChotuSoundbox3D {
       this.screenGroup.add(micMesh);
     });
 
-    // 2. Bezel-Less Edge-to-Edge Glass Screen (Flush with front casing face)
-    const glassGeom = new THREE.PlaneGeometry(headWidth, headHeight);
-    const glassMesh = new THREE.Mesh(glassGeom, new THREE.MeshBasicMaterial({ color: 0x000000 }));
-    glassMesh.position.set(0, 0, 0.0005);
-    this.screenGroup.add(glassMesh);
-
-    // 3. Screen Aperture Cutout for CSS3D Iframe (Flush active display plane)
-    const displayGeom = new THREE.PlaneGeometry(headWidth, headHeight);
-    const displayMesh = new THREE.Mesh(displayGeom, this.glossyBlackScreenMat);
-    displayMesh.position.set(0, 0, 0.001);
-    this.screenGroup.add(displayMesh);
+    // 2. Screen Aperture Cutout for CSS3D Iframe (punches transparent hole in WebGL canvas)
+    const screenBaseGeom = new THREE.PlaneGeometry(headWidth, headHeight);
+    const screenBaseMesh = new THREE.Mesh(screenBaseGeom, this.glossyBlackScreenMat);
+    screenBaseMesh.position.set(0, 0, 0.001);
+    this.screenGroup.add(screenBaseMesh);
   }
 
   // Toggle head facing: Customer Side (0 rad) <-> Merchant Side (Math.PI rad)

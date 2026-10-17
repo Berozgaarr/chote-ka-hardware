@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>500 — Connection Not Available</title>
+  <title>Chotu AI Screen</title>
   <style>
     * {
       margin: 0;
@@ -11,13 +11,12 @@
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      pointer-events: none !important;
     }
 
     body {
       width: 1024px;
       height: 678px;
-      background: #000000;
+      background: radial-gradient(circle at 50% 50%, #030814 0%, #01040a 60%, #000000 100%);
       color: #FFFFFF;
       overflow: hidden;
       display: flex;
@@ -25,39 +24,284 @@
       align-items: center;
       justify-content: center;
       user-select: none;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      position: relative;
     }
 
-    .error-wrapper {
-      display: flex;
-      flex-direction: column;
+    /* Ambient glass screen glare effect */
+    .screen-glare {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+    }
+
+    /* Subtle curved screen vignette */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+    }
+
+    /* Face Container */
+    .face-container {
+      display: none; /* Can be shown via mode switch */
       align-items: center;
-      text-align: center;
+      justify-content: center;
+      gap: 130px;
+      position: relative;
+      animation: idleFloat 5s ease-in-out infinite;
     }
 
-    .status-code {
-      font-size: 76px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.0;
-      color: #F87171; /* Refined soft error coral-red */
-      margin-bottom: 14px;
+    /* Sleek Angular Cyber / Visor Eyes */
+    .eye {
+      position: relative;
+      width: 195px;
+      height: 82px;
+      background: #4cc7ff;
+      box-shadow:
+        0 0 25px #0099ff,
+        0 0 50px #0077ff,
+        0 0 85px #0055ff,
+        0 0 130px rgba(0, 110, 255, 0.75);
+      animation: subtlePulse 4s ease-in-out infinite;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease;
+      transform-origin: center center;
+    }
+
+    .eye-left {
+      clip-path: polygon(0% 12%, 100% 28%, 100% 74%, 0% 90%);
+      border-radius: 10px 8px 8px 10px;
+      transform: rotate(2.5deg);
+    }
+
+    .eye-right {
+      clip-path: polygon(0% 28%, 100% 12%, 100% 90%, 0% 74%);
+      border-radius: 8px 10px 10px 8px;
+      transform: rotate(-2.5deg);
+    }
+
+    .eye::after {
+      content: '';
+      position: absolute;
+      inset: 8px 18px;
+      background: #ffffff;
+      border-radius: 6px;
+      filter: blur(4px);
       opacity: 0.95;
+      pointer-events: none;
     }
 
-    .status-text {
-      font-size: 28px;
+    .eye.blinking {
+      transform: scaleY(0.04) !important;
+      opacity: 0.15 !important;
+      box-shadow: 0 0 8px #0088ff !important;
+    }
+
+    /* GREETING "Hello" DISPLAY CONTAINER (from reference image) */
+    .hello-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: helloBreath 4s ease-in-out infinite;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    /* Outline Neon Glowing Gradient Text */
+    .hello-text {
+      font-size: 195px;
       font-weight: 500;
-      letter-spacing: -0.015em;
-      color: #F1F5F9;
-      line-height: 1.25;
+      letter-spacing: -0.01em;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      position: relative;
+      line-height: 1;
+
+      /* Hollow glowing stroke with gradient from Cyan (#00f0ff) on left to Magenta/Purple (#ff2df7) on right */
+      color: transparent;
+      -webkit-text-stroke: 4.5px transparent;
+      background: linear-gradient(90deg, #00f2fe 0%, #4facfe 35%, #9b51e0 68%, #ff2a8d 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      /* Multi-layered Neon Bloom Filter */
+      filter: 
+        drop-shadow(0 0 10px rgba(0, 242, 254, 0.85))
+        drop-shadow(0 0 25px rgba(79, 172, 254, 0.7))
+        drop-shadow(0 0 45px rgba(155, 81, 224, 0.65))
+        drop-shadow(0 0 80px rgba(255, 42, 141, 0.55));
+    }
+
+    /* Subtle hollow inner overlay layer for laser sharpness */
+    .hello-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 195px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
+      pointer-events: none;
+      filter: blur(0.5px);
+    }
+
+    @keyframes helloBreath {
+      0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+      }
+      50% {
+        transform: scale(1.02);
+        filter: brightness(1.15) drop-shadow(0 0 15px rgba(255, 255, 255, 0.25));
+      }
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% {
+        filter: brightness(1) drop-shadow(0 0 10px rgba(0, 145, 255, 0.5));
+      }
+      50% {
+        filter: brightness(1.18) drop-shadow(0 0 25px rgba(0, 175, 255, 0.8));
+      }
+    }
+
+    @keyframes idleFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+
+    /* Voice / Speaking Wave Indicator */
+    .speech-wave {
+      position: absolute;
+      bottom: 50px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .speaking .speech-wave {
+      opacity: 1;
+    }
+
+    .wave-bar {
+      width: 6px;
+      height: 12px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, #00f2fe, #ff2a8d);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.8);
+      animation: waveAnim 0.7s ease-in-out infinite alternate;
+    }
+
+    .wave-bar:nth-child(2) { height: 22px; animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { height: 34px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { height: 18px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(5) { height: 10px; animation-delay: 0.05s; }
+
+    @keyframes waveAnim {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
     }
   </style>
 </head>
 <body>
-  <div class="error-wrapper">
-    <div class="status-code">500</div>
-    <div class="status-text">Connection Not Available</div>
+  <div class="screen-glare"></div>
+  <div class="vignette"></div>
+
+  <!-- Neon Glowing "Hello" Greeting Display -->
+  <div class="hello-container" id="hello-view">
+    <div class="hello-text">Hello</div>
+    <div class="hello-overlay">Hello</div>
   </div>
+
+  <!-- Cyber Eyes Display Container (toggleable) -->
+  <div class="face-container" id="eyes-view">
+    <div class="eye eye-left" id="eye-left"></div>
+    <div class="eye eye-right" id="eye-right"></div>
+  </div>
+
+  <!-- Voice reactive wave indicator -->
+  <div class="speech-wave" id="speech-wave">
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+  </div>
+
+  <script>
+    const helloView = document.getElementById('hello-view');
+    const eyesView = document.getElementById('eyes-view');
+    const eyeLeft = document.getElementById('eye-left');
+    const eyeRight = document.getElementById('eye-right');
+
+    // Slow, natural robotic blink engine
+    function triggerSlowBlink() {
+      if (eyesView.style.display !== 'none') {
+        eyeLeft.classList.add('blinking');
+        eyeRight.classList.add('blinking');
+
+        setTimeout(() => {
+          eyeLeft.classList.remove('blinking');
+          eyeRight.classList.remove('blinking');
+        }, 280);
+      }
+
+      const nextBlink = Math.random() * 3500 + 4000;
+      setTimeout(triggerSlowBlink, nextBlink);
+    }
+    setTimeout(triggerSlowBlink, 3000);
+
+    // Global control API for backend / agent events
+    window.chotuScreen = {
+      setMode: (mode) => {
+        if (mode === 'eyes') {
+          helloView.style.display = 'none';
+          eyesView.style.display = 'flex';
+        } else if (mode === 'hello') {
+          eyesView.style.display = 'none';
+          helloView.style.display = 'flex';
+        }
+      },
+      setText: (text) => {
+        const helloText = document.querySelector('.hello-text');
+        const helloOverlay = document.querySelector('.hello-overlay');
+        if (helloText) helloText.textContent = text;
+        if (helloOverlay) helloOverlay.textContent = text;
+      },
+      setSpeaking: (isSpeaking) => {
+        if (isSpeaking) {
+          document.body.classList.add('speaking');
+        } else {
+          document.body.classList.remove('speaking');
+        }
+      }
+    };
+
+    window.addEventListener('message', (event) => {
+      if (!event.data) return;
+      if (event.data.type === 'SET_MODE') {
+        window.chotuScreen.setMode(event.data.mode);
+      } else if (event.data.type === 'SET_TEXT') {
+        window.chotuScreen.setText(event.data.text);
+      } else if (event.data.type === 'SET_SPEAKING') {
+        window.chotuScreen.setSpeaking(event.data.speaking);
+      }
+    });
+  </script>
 </body>
 </html>

@@ -172,77 +172,79 @@ export class ChotuSoundbox3D {
     this.neckGroup.add(collarMesh);
 
     // B. Slender Satin Aluminum Rotation Rod / Spindle (Dual-axis Y rotation)
-    // Extended gracefully to reach the screen center height
-    const rodRadius = 0.13;
-    const rodTopY = 1.95; // Exactly meets the display center
+    // Vertical spindle goes up straight to meet the hinge axis behind the screen
+    const rodRadius = 0.12;
+    const rodTopY = 1.95; // Meets the center of the display height
     const rodHeight = rodTopY - (neckBaseY + 0.08);
     const rodGeom = new THREE.CylinderGeometry(rodRadius, rodRadius, rodHeight, 48);
     const rodMesh = new THREE.Mesh(rodGeom, this.metalAccentMat);
-    rodMesh.position.set(0, neckBaseY + 0.08 + rodHeight / 2, -0.16);
+    rodMesh.position.set(0, neckBaseY + 0.08 + rodHeight / 2, 0);
     rodMesh.castShadow = true;
     this.headGroup.add(rodMesh);
 
     // Precision tolerance accent sleeve on spindle
-    const sleeveGeom = new THREE.CylinderGeometry(0.17, 0.17, 0.10, 48);
+    const sleeveGeom = new THREE.CylinderGeometry(0.16, 0.16, 0.10, 48);
     const sleeveMesh = new THREE.Mesh(sleeveGeom, this.darkChassisMat);
-    sleeveMesh.position.set(0, neckBaseY + 0.36, -0.16);
+    sleeveMesh.position.set(0, neckBaseY + 0.36, 0);
     this.headGroup.add(sleeveMesh);
 
     // C. Center Hinge Hub mounted directly in the middle of the display's backside
+    // Positioned strictly behind the rear casing (back face is at z = -headDepth = -0.18)
     const hingeY = 1.95;
-    const hingeZ = -0.16;
+    const hingeZ = -0.18; // Tangent to the back face of the display
 
-    // 1. Sleek Precision Disc Hinge Base (connected to stand neck)
-    const hingeDiscGeom = new THREE.CylinderGeometry(0.28, 0.28, 0.14, 48);
-    hingeDiscGeom.rotateX(Math.PI / 2);
-    const hingeDiscMesh = new THREE.Mesh(hingeDiscGeom, this.titaniumBaseMat);
-    hingeDiscMesh.position.set(0, hingeY, hingeZ + 0.02);
-    hingeDiscMesh.castShadow = true;
-    this.headGroup.add(hingeDiscMesh);
+    // 1. Spindle top cradle head supporting the transverse hinge
+    const cradleGeom = new RoundedBoxGeometry(0.36, 0.16, 0.16, 4, 0.04);
+    const cradleMesh = new THREE.Mesh(cradleGeom, this.titaniumBaseMat);
+    cradleMesh.position.set(0, hingeY, hingeZ - 0.04);
+    cradleMesh.castShadow = true;
+    this.headGroup.add(cradleMesh);
 
     // 2. High-Precision Transverse Friction Barrel Axis (The actual mechanical hinge axis)
-    const barrelGeom = new THREE.CylinderGeometry(0.09, 0.09, 0.46, 36);
+    const barrelGeom = new THREE.CylinderGeometry(0.065, 0.065, 0.40, 36);
     barrelGeom.rotateZ(Math.PI / 2);
     const barrelMesh = new THREE.Mesh(barrelGeom, this.metalAccentMat);
-    barrelMesh.position.set(0, hingeY, hingeZ + 0.04);
+    barrelMesh.position.set(0, hingeY, hingeZ - 0.04);
     barrelMesh.castShadow = true;
     this.headGroup.add(barrelMesh);
 
     // End-caps with diamond-cut bevels on left & right of the hinge barrel
-    [-0.23, 0.23].forEach(x => {
-      const capGeom = new THREE.CylinderGeometry(0.11, 0.11, 0.04, 32);
+    [-0.20, 0.20].forEach(x => {
+      const capGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.03, 32);
       capGeom.rotateZ(Math.PI / 2);
       const capMesh = new THREE.Mesh(capGeom, this.darkChassisMat);
-      capMesh.position.set(x, hingeY, hingeZ + 0.04);
+      capMesh.position.set(x, hingeY, hingeZ - 0.04);
       this.headGroup.add(capMesh);
 
-      const boltGeom = new THREE.CylinderGeometry(0.05, 0.05, 0.015, 20);
+      const boltGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.012, 20);
       boltGeom.rotateZ(Math.PI / 2);
       const boltMesh = new THREE.Mesh(boltGeom, this.metalAccentMat);
-      boltMesh.position.set(x > 0 ? x + 0.022 : x - 0.022, hingeY, hingeZ + 0.04);
+      boltMesh.position.set(x > 0 ? x + 0.016 : x - 0.016, hingeY, hingeZ - 0.04);
       this.headGroup.add(boltMesh);
     });
 
-    // 3. Apple-style Center Backplate Mounting Bracket on Screen (tilts with the screenGroup)
-    const bracketPlateGeom = new THREE.CylinderGeometry(0.30, 0.32, 0.05, 48);
+    // 3. Apple-style Center Backplate Mounting Bracket on Screen (tilts with screenGroup)
+    // Strictly sits behind the back surface of the screen casing: z < -0.18
+    const bracketPlateGeom = new THREE.CylinderGeometry(0.24, 0.25, 0.025, 48);
     bracketPlateGeom.rotateX(Math.PI / 2);
     const bracketPlateMesh = new THREE.Mesh(bracketPlateGeom, this.darkChassisMat);
-    bracketPlateMesh.position.set(0, 0, -0.09 - 0.025);
+    // Center of 0.025 thick disc placed at -0.18 - 0.0125 = -0.1925
+    bracketPlateMesh.position.set(0, 0, -0.18 - 0.0125);
     this.screenGroup.add(bracketPlateMesh);
 
-    // Sleek CNC hinge clasp tongue coupling screen backplate to transverse barrel
-    const claspGeom = new RoundedBoxGeometry(0.24, 0.22, 0.12, 4, 0.03);
-    const claspMesh = new THREE.Mesh(claspGeom, this.metalAccentMat);
-    claspMesh.position.set(0, 0, -0.09 - 0.06);
-    claspMesh.castShadow = true;
-    this.screenGroup.add(claspMesh);
+    // Precision CNC hinge clamp bridging bracket backplate to transverse barrel
+    const clampGeom = new RoundedBoxGeometry(0.18, 0.14, 0.05, 4, 0.02);
+    const clampMesh = new THREE.Mesh(clampGeom, this.metalAccentMat);
+    clampMesh.position.set(0, 0, -0.18 - 0.035);
+    clampMesh.castShadow = true;
+    this.screenGroup.add(clampMesh);
   }
 
   // 3. BEZEL-LESS UNIBODY DISPLAY MONITOR (Solid Proportion & Edge-to-Edge Glass)
   // Flush, zero-displacement front aperture so screen never separates from body!
   private buildDisplayHead() {
     const headCenterY = 1.95; // Screen center height
-    const headCenterZ = -0.08; // Flushly aligned with center hinge hub
+    const headCenterZ = 0.0; // Display front face at z = 0, back at z = -headDepth (-0.18)
 
     this.screenGroup.position.set(0, headCenterY, headCenterZ);
     this.screenGroup.rotation.x = -THREE.MathUtils.degToRad(20);

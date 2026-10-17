@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>500 — Connection Not Available</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      pointer-events: none !important;
+    }
+
+    body {
+      width: 1024px;
+      height: 678px;
+      background: #000000;
+      color: #FFFFFF;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .error-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .status-code {
+      font-size: 76px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.0;
+      color: #F87171; /* Refined soft error coral-red */
+      margin-bottom: 14px;
+      opacity: 0.95;
+    }
+
+    .status-text {
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      color: #F1F5F9;
+      line-height: 1.25;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-wrapper">
+    <div class="status-code">500</div>
+    <div class="status-text">Connection Not Available</div>
+  </div>
+</body>
+</html>
